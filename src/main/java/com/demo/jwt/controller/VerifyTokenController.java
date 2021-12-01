@@ -5,6 +5,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,12 @@ import java.util.Calendar;
 public class VerifyTokenController {
 
     @Autowired
-    private JWSVerifier verifier;
+    @Qualifier("RsaVerifier")
+    private JWSVerifier rsaVerifier;
+
+    @Autowired
+    @Qualifier("HmacVerifier")
+    private JWSVerifier hmacVerifier;
 
     /**
      * curl -H "Authorization: token" http://localhost:18080/jwt/verify
@@ -27,9 +33,20 @@ public class VerifyTokenController {
      */
     @GetMapping
     @SneakyThrows
-    public boolean verifyToken(@RequestHeader("Authorization") String token) {
+    public boolean verifyRSAToken(@RequestHeader("Authorization") String token) {
         SignedJWT parse = SignedJWT.parse(token);
-        if (!parse.verify(verifier)) {
+        if (!parse.verify(rsaVerifier)) {
+            throw new RuntimeException("invalid token");
+        }
+        verifyClaimsSet(parse.getJWTClaimsSet());
+        return true;
+    }
+
+    @GetMapping("hmac")
+    @SneakyThrows
+    public boolean verifyHMACToken(@RequestHeader("Authorization") String token) {
+        SignedJWT parse = SignedJWT.parse(token);
+        if (!parse.verify(hmacVerifier)) {
             throw new RuntimeException("invalid token");
         }
         verifyClaimsSet(parse.getJWTClaimsSet());
