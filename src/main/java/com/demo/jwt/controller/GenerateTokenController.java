@@ -1,17 +1,11 @@
 package com.demo.jwt.controller;
 
-import com.demo.jwt.util.PEMKeyUtils;
-import com.demo.jwt.vo.Token;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.crypto.RSASSASigner;
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.nimbusds.jwt.util.DateUtils;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
