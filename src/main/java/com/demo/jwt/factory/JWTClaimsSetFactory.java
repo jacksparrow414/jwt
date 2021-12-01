@@ -24,6 +24,7 @@ public class JWTClaimsSetFactory {
                 .notBeforeTime(signTimeTime)
                 .issueTime(signTimeTime)
                 .jwtID(UUID.randomUUID().toString())
+                .claim("scope", "read write")
                 .build();
     }
 }

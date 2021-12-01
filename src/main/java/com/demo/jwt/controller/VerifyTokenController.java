@@ -1,6 +1,8 @@
 package com.demo.jwt.controller;
 
+import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.SneakyThrows;
@@ -25,6 +27,9 @@ public class VerifyTokenController {
     @Autowired
     @Qualifier("HmacVerifier")
     private JWSVerifier hmacVerifier;
+    
+    @Autowired
+    private JWEDecrypter jweDecrypter;
 
     /**
      * curl -H "Authorization: token" http://localhost:18080/jwt/verify
@@ -51,6 +56,13 @@ public class VerifyTokenController {
         }
         verifyClaimsSet(parse.getJWTClaimsSet());
         return true;
+    }
+    
+    @GetMapping("decrypt")
+    @SneakyThrows
+    public void decryptRSASecretToken(@RequestHeader("Authorization") String token) {
+        EncryptedJWT encryptedJWT = EncryptedJWT.parse(token);
+        encryptedJWT.decrypt(jweDecrypter);
     }
 
     /**
